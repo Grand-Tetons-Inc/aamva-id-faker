@@ -41,6 +41,11 @@ The AAMVA ID Faker is a **786-line single-file Python application** designed to 
 
 ### High-Level Architecture Diagram
 
+![System Architecture](docs/images/architecture_diagram.png)
+
+<details>
+<summary>ASCII Version (click to expand)</summary>
+
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         AAMVA ID FAKER SYSTEM                        │
@@ -107,6 +112,8 @@ The AAMVA ID Faker is a **786-line single-file Python application** designed to 
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
+</details>
+
 ### Architectural Patterns
 
 #### 1. Layered Architecture (3 Layers)
@@ -131,6 +138,11 @@ User Input → License Data → Barcode Data → Encoded Barcode → Documents
 ## Component Breakdown
 
 ### Component Dependency Graph
+
+![Component Dependencies](docs/images/component_dependency_graph.png)
+
+<details>
+<summary>ASCII Version (click to expand)</summary>
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -177,6 +189,8 @@ User Input → License Data → Barcode Data → Encoded Barcode → Documents
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+</details>
+
 ### Function Catalog
 
 | Function | Lines | LOC | Purpose | Dependencies |
@@ -202,6 +216,11 @@ User Input → License Data → Barcode Data → Encoded Barcode → Documents
 ## Data Flow Diagrams
 
 ### Primary Data Flow (Single License Generation)
+
+![Data Flow Diagram](docs/images/data_flow_diagram.png)
+
+<details>
+<summary>ASCII Version (click to expand)</summary>
 
 ```
 START
@@ -301,6 +320,8 @@ START
      ▼
    END
 ```
+
+</details>
 
 ### Batch Processing Flow (N Licenses)
 

@@ -190,6 +190,8 @@ The three agents participated in structured debates on key questions:
    - Research state-specific requirements
    - Add custom state subfile data
 
+![State Coverage](docs/images/state_coverage_chart.png)
+
 ---
 
 ## Documentation Generated

@@ -535,6 +535,11 @@ SEX_CODES = {
 
 ### AAMVA PDF417 Barcode Format
 
+![Barcode Structure](docs/images/barcode_structure_diagram.png)
+
+<details>
+<summary>ASCII Version (click to expand)</summary>
+
 ```
 ┌──────────────────────────────────────────────────────────┐
 │ AAMVA PDF417 BARCODE DATA STRUCTURE                      │
@@ -617,6 +622,8 @@ SEX_CODES = {
 │ TOTAL SIZE: ~263 bytes (variable based on data)        │
 └──────────────────────────────────────────────────────────┘
 ```
+
+</details>
 
 ### Barcode Encoding Visualization
 
