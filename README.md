@@ -1,6 +1,6 @@
 # License Generator
 
-This project generates test license data and prints the data along with a PDF417 barcode in the proper AAMVA format on one side of a business card.
+This project generates test license data and prints the data along with a PDF417 barcode in the proper AAMVA format on one side of a business card. It is entirely possible that this is broken. I wrote the original to create PDF417 barcodes with enough data for me to verify them visually when scanned using a 2D USB barcode scanner. I wanted a bit of cruft adeded to it, so I had an AI munge some things in, and I haven't tested it very much. Nor do I intend to do so. If you need this sort of thing, then you can look at this, use it as a base and generate test data for your project. If you are using it for soemthing else, well that's fine too, but you'll have to figure it out. Good luck and have a nice day.
 
 ## Features
 - Generates sample license data for testing purposes.
