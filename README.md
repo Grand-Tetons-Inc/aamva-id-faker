@@ -1,12 +1,62 @@
-# aamva-id-faker
-Generates AAMVA DRL/IDs to test with scanners. Has various settings. Produces PDF417 barcode. Use at your own risk. Unsupported, but may be useful for research and testing projects.
+# License Generator
 
-I needed a script to produce reasonable PDF417 barcodes accurately simulating AAMVA license data using faker-based data generators, and then printed on cards. I use this to test varying private projects including an android app and a web app that uses USB & BlueTooth 2D barcode scanners. I could NOT find anything that would make enough licneses using automated data generators, and would produce something that adhered to AAMVA standards. This... _SHOULD_. However, I do not guarantee that it will. 
+This project generates test license data and prints the data along with a PDF417 barcode in the proper AAMVA format on one side of a business card.
 
-If you use this code, and find erorrs, please feel free to contact me. I might not fix things, as I'm not being paid for it anymore. However, I think this (though it is horrible to read... I am NOT a python programmer and created this very quickly) should be useful-ish.
+## Features
+- Generates sample license data for testing purposes.
+- Encodes license data into a PDF417 barcode following the AAMVA (American Association of Motor Vehicle Administrators) standard.
+- DRL #s are in correct format for each state, as defined by: [US Personal Identifiers: US Driver's License Number](https://docs.umbrella.com/cloudlock-documentation/docs/us-personal-identifiers#us-drivers-license-number)
+- Outputs:
+  - Text data files for each license
+  - PDF files formatted for business card printing
+  - Bitmap images of the PDF417 barcodes
 
-This produces 'licenses' that can be printed on Avery style business cards using a laser printer. You can adjust things in the script to do things. If you need a bunch of cards with PDF417s to test your scanner, this should work.
+## Output Structure
+- `output/cards/`: Contains PDF files for each generated license, formatted for business cards.
+- `output/barcodes/`: Contains bitmap images of the PDF417 barcodes for each license.
+- `output/data/`: Contains text files with the raw license data for each license.
 
-Basic Check data is printed on the front of the card. You're on your own for printing double-sided cards. I don't need that and my printer only prints one-sided pages. I never did get Open/Libre Office ODF/ODT documents to print. But DOCX and PDF seem to work quite well.
+## Usage
+1. Run the main script to generate licenses and output files:
+   ```powershell
+   python generate_licenses.py
+   ```
+2. Find the generated cards, barcodes, and data in the `output/` directory.
 
-You should also be able to add sections to the licenses to generate state-specific fields. Some random bullshit ones are included because I needed to test having multiple data files in the PDF417 data. If you are NOT testing for having multiple data files & subfiles in your PDF417 data, then you are doing it wrong. 
+## Requirements
+- Python 3.x
+- Python venv
+```
+  sudo apt install python3-venv
+  cd <project-directory>
+  python -m venv .venv
+```
+
+- Required Python packages (see script for details)
+```
+  cd <project-directory>
+  source .venv/bin/activate
+  pip install faker pdf417 pillow odfpy reportlab python-docx
+```
+
+# MIT License
+
+Copyright (c) 2025 James W Rogers, Jr. / Grand Tetons Inc.  
+Written for SMLA Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
