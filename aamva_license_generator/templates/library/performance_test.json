@@ -1,0 +1,49 @@
+{
+  "name": "performance_test",
+  "version": "1.0.0",
+  "description": "Large batch template for performance and stress testing",
+  "author": "AAMVA Team",
+  "tags": [
+    "testing",
+    "performance",
+    "stress"
+  ],
+  "parameters": {
+    "state": "CA",
+    "count": 1000,
+    "parallel": true,
+    "output_dir": "output/performance_test"
+  },
+  "parameter_definitions": [
+    {
+      "name": "count",
+      "type": "integer",
+      "default": 1000,
+      "description": "Large count for performance testing",
+      "required": false,
+      "validation": {
+        "min_value": 100,
+        "max_value": 10000
+      },
+      "examples": []
+    },
+    {
+      "name": "parallel",
+      "type": "boolean",
+      "default": true,
+      "description": "Enable parallel generation",
+      "required": false,
+      "validation": {},
+      "examples": []
+    }
+  ],
+  "parent_template": null,
+  "variables": {
+    "COUNT": "1000"
+  },
+  "metadata": {
+    "created_at": "2025-11-20T08:00:00Z",
+    "updated_at": "2025-11-20T08:00:00Z"
+  },
+  "documentation": "# Performance Test Template\n\nGenerates 1000 licenses for performance and stress testing.\n\n## Use Cases\n- Performance benchmarking\n- Stress testing\n- Batch processing validation\n- Memory usage testing\n\n## Recommendations\n- Enable parallel generation for faster execution\n- Monitor memory usage\n- Test with different batch sizes\n"
+}

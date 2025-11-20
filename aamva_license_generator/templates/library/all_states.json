@@ -1,0 +1,37 @@
+{
+  "name": "all_states",
+  "version": "1.0.0",
+  "description": "Generate one license from each US state for comprehensive state coverage testing",
+  "author": "AAMVA Team",
+  "tags": [
+    "testing",
+    "coverage",
+    "states"
+  ],
+  "parameters": {
+    "states": "ALL",
+    "count": 51,
+    "output_dir": "output/all_states"
+  },
+  "parameter_definitions": [
+    {
+      "name": "states",
+      "type": "string",
+      "default": "ALL",
+      "description": "Generate for all states",
+      "required": true,
+      "validation": {},
+      "examples": []
+    }
+  ],
+  "parent_template": null,
+  "variables": {
+    "COUNT": "51",
+    "SCENARIO": "All States Coverage"
+  },
+  "metadata": {
+    "created_at": "2025-11-20T08:00:00Z",
+    "updated_at": "2025-11-20T08:00:00Z"
+  },
+  "documentation": "# All States Coverage Template\n\nGenerates exactly one license from each US jurisdiction (50 states + DC).\n\n## Use Cases\n- Parser testing across all state formats\n- Comprehensive format coverage\n- State-specific validation testing\n- Documentation and training materials\n\n## Output\n51 licenses total, one per jurisdiction in alphabetical order.\n"
+}

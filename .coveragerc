@@ -1,0 +1,129 @@
+# Coverage.py Configuration
+# Target: 95%+ code coverage
+
+[run]
+# Source directories to measure
+source = src
+
+# Omit these files/directories from coverage
+omit =
+    */tests/*
+    */test_*.py
+    */__init__.py
+    */conftest.py
+    */setup.py
+    */.venv/*
+    */venv/*
+    */virtualenv/*
+    */.tox/*
+    */dist/*
+    */build/*
+    */__pycache__/*
+
+# Enable branch coverage (more thorough than line coverage)
+branch = True
+
+# Measure coverage in parallel mode (for pytest-xdist)
+parallel = True
+
+# Store data in this file
+data_file = .coverage
+
+[report]
+# Precision for coverage percentages
+precision = 2
+
+# Show missing lines in report
+show_missing = True
+
+# Skip covered files in report (show only incomplete)
+skip_covered = False
+
+# Skip empty files
+skip_empty = True
+
+# Fail if coverage is below this percentage
+fail_under = 95.00
+
+# Exclude these lines from coverage reporting
+exclude_lines =
+    # Standard pragma
+    pragma: no cover
+
+    # Don't complain about missing debug code
+    def __repr__
+    def __str__
+
+    # Don't complain if tests don't hit defensive assertion code
+    raise AssertionError
+    raise NotImplementedError
+
+    # Don't complain if non-runnable code isn't run
+    if __name__ == .__main__.:
+    if __name__=="__main__":
+
+    # Don't complain about type checking code
+    if TYPE_CHECKING:
+    if typing.TYPE_CHECKING:
+
+    # Don't complain about abstract methods
+    @abstractmethod
+    @abc.abstractmethod
+
+    # Don't complain about protocol methods
+    @protocol
+
+    # Don't complain about overload definitions
+    @overload
+
+    # Don't complain about ellipsis in stub files
+    \.\.\.
+
+    # Don't complain about pass statements
+    pass
+
+    # Don't complain about sys.exit
+    sys.exit
+
+    # Type annotations
+    -> NoReturn
+
+# Ignore errors
+ignore_errors = False
+
+# Sort report by coverage percentage
+sort = Cover
+
+[html]
+# Directory for HTML report
+directory = htmlcov
+
+# Title for HTML report
+title = AAMVA ID Faker - Coverage Report
+
+# Show contexts in HTML report (requires [run] dynamic_context)
+show_contexts = False
+
+[json]
+# Output JSON report to this file
+output = coverage.json
+
+# Pretty-print JSON
+pretty_print = True
+
+# Show contexts in JSON
+show_contexts = False
+
+[xml]
+# Output XML report (for CI/CD tools like Codecov)
+output = coverage.xml
+
+[paths]
+# Map different path representations to the same source
+# Useful for combining coverage from different environments
+source =
+    src/
+    */site-packages/
+
+# Aliases for combining coverage data
+# (useful when running tests in different directories)

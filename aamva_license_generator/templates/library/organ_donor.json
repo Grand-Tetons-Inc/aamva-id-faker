@@ -1,0 +1,37 @@
+{
+  "name": "organ_donor",
+  "version": "1.0.0",
+  "description": "Generate licenses with organ donor designation",
+  "author": "AAMVA Team",
+  "tags": [
+    "testing",
+    "organ_donor",
+    "special_cases"
+  ],
+  "parameters": {
+    "state": "CA",
+    "count": 10,
+    "organ_donor": true,
+    "output_dir": "output/organ_donor_testing"
+  },
+  "parameter_definitions": [
+    {
+      "name": "organ_donor",
+      "type": "boolean",
+      "default": true,
+      "description": "Mark as organ donor",
+      "required": true,
+      "validation": {},
+      "examples": []
+    }
+  ],
+  "parent_template": null,
+  "variables": {
+    "STATE": "CA"
+  },
+  "metadata": {
+    "created_at": "2025-11-20T08:00:00Z",
+    "updated_at": "2025-11-20T08:00:00Z"
+  },
+  "documentation": "# Organ Donor Template\n\nGenerates licenses with organ donor designation (heart indicator).\n\nTest organ donor status recognition in ID scanning systems.\n"
+}

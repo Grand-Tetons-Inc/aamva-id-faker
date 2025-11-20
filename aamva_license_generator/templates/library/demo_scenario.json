@@ -1,0 +1,51 @@
+{
+  "name": "demo_scenario",
+  "version": "1.0.0",
+  "description": "Professional demo licenses for sales presentations",
+  "author": "AAMVA Team",
+  "tags": [
+    "demo",
+    "sales",
+    "presentation"
+  ],
+  "parameters": {
+    "state": "CA",
+    "count": 5,
+    "age_range": [
+      25,
+      40
+    ],
+    "clean_data": true,
+    "output_dir": "output/demo"
+  },
+  "parameter_definitions": [
+    {
+      "name": "state",
+      "type": "string",
+      "default": "CA",
+      "description": "State code (CA recommended for demos)",
+      "required": true,
+      "validation": {},
+      "examples": []
+    },
+    {
+      "name": "clean_data",
+      "type": "boolean",
+      "default": true,
+      "description": "Use clean, professional data (no edge cases)",
+      "required": false,
+      "validation": {},
+      "examples": []
+    }
+  ],
+  "parent_template": null,
+  "variables": {
+    "STATE": "CA",
+    "PURPOSE": "Demo"
+  },
+  "metadata": {
+    "created_at": "2025-11-20T08:00:00Z",
+    "updated_at": "2025-11-20T08:00:00Z"
+  },
+  "documentation": "# Demo Scenario Template\n\nProfessional licenses for product demonstrations and sales presentations.\n\n## Features\n- Clean, realistic data\n- Professional age range (25-40)\n- No edge cases or unusual data\n- Easy to scan and demonstrate\n\n## Use Cases\n- Sales presentations\n- Product demos\n- Trade show demonstrations\n- Customer onboarding\n\n## Notes\nGenerates visually appealing, easy-to-scan licenses that work reliably\nin live demonstrations.\n"
+}

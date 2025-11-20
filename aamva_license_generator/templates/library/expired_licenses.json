@@ -1,0 +1,63 @@
+{
+  "name": "expired_licenses",
+  "version": "1.0.0",
+  "description": "Generate expired, expiring soon, and valid licenses for testing expiration logic",
+  "author": "AAMVA Team",
+  "tags": [
+    "testing",
+    "expiration",
+    "validation"
+  ],
+  "parameters": {
+    "state": "CA",
+    "count": 9,
+    "expiration_scenarios": [
+      {
+        "type": "expired",
+        "days_ago": -180,
+        "count": 3
+      },
+      {
+        "type": "expiring_soon",
+        "days_from_now": 15,
+        "count": 3
+      },
+      {
+        "type": "valid",
+        "days_from_now": 365,
+        "count": 3
+      }
+    ],
+    "output_dir": "output/expiration_testing"
+  },
+  "parameter_definitions": [
+    {
+      "name": "state",
+      "type": "string",
+      "default": "CA",
+      "description": "State code for licenses",
+      "required": true,
+      "validation": {},
+      "examples": []
+    },
+    {
+      "name": "count",
+      "type": "integer",
+      "default": 9,
+      "description": "Total licenses to generate",
+      "required": true,
+      "validation": {},
+      "examples": []
+    }
+  ],
+  "parent_template": null,
+  "variables": {
+    "STATE": "CA",
+    "SCENARIO": "Expiration Testing"
+  },
+  "metadata": {
+    "created_at": "2025-11-20T08:00:00Z",
+    "updated_at": "2025-11-20T08:00:00Z"
+  },
+  "documentation": "# Expired Licenses Template\n\nTests expiration validation with three scenarios:\n\n1. **Expired**: Licenses expired 30-365 days ago\n2. **Expiring Soon**: Licenses expiring within 30 days\n3. **Valid**: Recently issued licenses (valid for 1+ years)\n\n## Test Cases\n- Verify expired licenses are rejected\n- Test \"expiring soon\" warning messages\n- Confirm valid licenses are accepted\n"
+}

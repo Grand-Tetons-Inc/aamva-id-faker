@@ -1,0 +1,58 @@
+{
+  "name": "edge_cases",
+  "version": "1.0.0",
+  "description": "Generate licenses with edge case data for robust testing",
+  "author": "AAMVA Team",
+  "tags": [
+    "testing",
+    "edge_cases",
+    "qa"
+  ],
+  "parameters": {
+    "state": "CA",
+    "count": 10,
+    "test_cases": [
+      {
+        "type": "long_name",
+        "count": 2
+      },
+      {
+        "type": "special_chars",
+        "count": 2
+      },
+      {
+        "type": "leap_year",
+        "count": 2
+      },
+      {
+        "type": "max_age",
+        "count": 2
+      },
+      {
+        "type": "min_age",
+        "count": 2
+      }
+    ],
+    "output_dir": "output/edge_cases"
+  },
+  "parameter_definitions": [
+    {
+      "name": "state",
+      "type": "string",
+      "default": "CA",
+      "description": "State code",
+      "required": true,
+      "validation": {},
+      "examples": []
+    }
+  ],
+  "parent_template": null,
+  "variables": {
+    "SCENARIO": "Edge Cases"
+  },
+  "metadata": {
+    "created_at": "2025-11-20T08:00:00Z",
+    "updated_at": "2025-11-20T08:00:00Z"
+  },
+  "documentation": "# Edge Cases Template\n\nTests unusual but valid data scenarios:\n\n1. **Long Names**: 30+ character names (truncation testing)\n2. **Special Characters**: Names with apostrophes, hyphens, accents\n3. **Leap Year**: Feb 29 birthdates\n4. **Maximum Age**: 100-year-old license holders\n5. **Minimum Age**: 16-year-old (minimum driving age)\n\n## Examples\n- Name: \"Wolfeschlegelsteinhausenbergerdorff\"\n- Name: \"O'Brien-Smith\"\n- Name: \"José García\"\n- DOB: 2000-02-29 (leap year)\n"
+}

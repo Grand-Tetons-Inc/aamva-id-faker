@@ -1,0 +1,61 @@
+{
+  "name": "training_scenario",
+  "version": "1.0.0",
+  "description": "Security training scenario with age verification and expiration examples",
+  "author": "AAMVA Team",
+  "tags": [
+    "training",
+    "education",
+    "demo"
+  ],
+  "parameters": {
+    "state": "NV",
+    "count": 8,
+    "scenarios": [
+      {
+        "type": "under_21",
+        "count": 2
+      },
+      {
+        "type": "valid_21_plus",
+        "count": 2
+      },
+      {
+        "type": "expired",
+        "count": 2
+      },
+      {
+        "type": "veteran",
+        "count": 1
+      },
+      {
+        "type": "organ_donor",
+        "count": 1
+      }
+    ],
+    "output_dir": "output/training",
+    "include_annotations": true
+  },
+  "parameter_definitions": [
+    {
+      "name": "state",
+      "type": "string",
+      "default": "NV",
+      "description": "State for training (Nevada recommended for casino training)",
+      "required": true,
+      "validation": {},
+      "examples": []
+    }
+  ],
+  "parent_template": null,
+  "variables": {
+    "STATE": "NV",
+    "STATE_NAME": "Nevada",
+    "TRAINING_TYPE": "Security Training"
+  },
+  "metadata": {
+    "created_at": "2025-11-20T08:00:00Z",
+    "updated_at": "2025-11-20T08:00:00Z"
+  },
+  "documentation": "# Training Scenario Template\n\nDesigned for security trainers conducting ID verification training.\n\n## Scenarios Covered\n1. Under 21 (should fail alcohol/gambling checks)\n2. Valid 21+ (should pass checks)\n3. Expired licenses (should be rejected)\n4. Veteran indicator recognition\n5. Organ donor indicator recognition\n\n## Recommended Use\n- New hire orientation\n- Quarterly refresher training\n- Casino security training\n- Bar/nightclub staff training\n\n## Output\n8 licenses with diverse, easy-to-explain scenarios.\n"
+}
