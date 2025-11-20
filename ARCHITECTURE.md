@@ -471,11 +471,29 @@ datetime        # Date/time manipulation (datetime, timedelta)
 tempfile        # (Imported but unused)
 ```
 
-### Installation Command
+### Installation Instructions
 
+**1. Set up Python virtual environment:**
+```bash
+# Install venv (if not already installed)
+sudo apt install python3-venv
+
+# Create virtual environment
+cd /path/to/aamva-id-faker
+python -m venv .venv
+
+# Activate virtual environment
+source .venv/bin/activate  # Linux/Mac
+# OR
+.venv\Scripts\activate     # Windows
+```
+
+**2. Install dependencies:**
 ```bash
 pip install faker pdf417 pillow odfpy reportlab python-docx
 ```
+
+**Note:** Always activate the virtual environment before running the script.
 
 ---
 
