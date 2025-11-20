@@ -296,6 +296,8 @@ state_subfile_data = {
 
 **Purpose:** Maps 6-digit Issuer Identification Numbers to jurisdictions
 
+**Official Reference:** [AAMVA Issuer Identification Numbers (IIN)](https://www.aamva.org/identity/issuer-identification-numbers-(iin))
+
 **Structure:**
 
 ```python

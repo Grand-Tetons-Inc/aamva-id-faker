@@ -566,6 +566,8 @@ pip install faker pdf417 pillow odfpy reportlab python-docx
 │      "636014": {"jurisdiction": "California", ...}       │
 │      ... 67 total entries ...                           │
 │    }                                                     │
+│    Official Reference:                                   │
+│    https://www.aamva.org/identity/issuer-identification-numbers-(iin)│
 │                                                          │
 │ 8. State License Formats (lines 148-246)                │
 │    state_formats = {                                     │
