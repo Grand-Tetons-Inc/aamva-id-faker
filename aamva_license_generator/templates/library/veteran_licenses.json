@@ -1,0 +1,46 @@
+{
+  "name": "veteran_licenses",
+  "version": "1.0.0",
+  "description": "Generate licenses with veteran designation for veteran status testing",
+  "author": "AAMVA Team",
+  "tags": [
+    "testing",
+    "veteran",
+    "special_cases"
+  ],
+  "parameters": {
+    "state": "TX",
+    "count": 10,
+    "veteran": true,
+    "output_dir": "output/veteran_testing"
+  },
+  "parameter_definitions": [
+    {
+      "name": "state",
+      "type": "string",
+      "default": "TX",
+      "description": "State code (TX has prominent veteran indicator)",
+      "required": true,
+      "validation": {},
+      "examples": []
+    },
+    {
+      "name": "veteran",
+      "type": "boolean",
+      "default": true,
+      "description": "Mark as veteran",
+      "required": true,
+      "validation": {},
+      "examples": []
+    }
+  ],
+  "parent_template": null,
+  "variables": {
+    "STATE": "TX"
+  },
+  "metadata": {
+    "created_at": "2025-11-20T08:00:00Z",
+    "updated_at": "2025-11-20T08:00:00Z"
+  },
+  "documentation": "# Veteran Licenses Template\n\nGenerates licenses with veteran designation.\n\nTexas is recommended as it has a prominent veteran flag indicator.\n\n## Use Cases\n- Testing veteran status recognition\n- Veteran discount validation\n- Training on veteran ID indicators\n"
+}

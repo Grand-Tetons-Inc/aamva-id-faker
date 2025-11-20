@@ -1,0 +1,48 @@
+{
+  "name": "quick_test",
+  "version": "1.0.0",
+  "description": "Quick test template for rapid iteration during development",
+  "author": "AAMVA Team",
+  "tags": [
+    "testing",
+    "development",
+    "quick"
+  ],
+  "parameters": {
+    "state": "CA",
+    "count": 3,
+    "output_dir": "output/quick_test"
+  },
+  "parameter_definitions": [
+    {
+      "name": "state",
+      "type": "string",
+      "default": "CA",
+      "description": "State code",
+      "required": true,
+      "validation": {},
+      "examples": []
+    },
+    {
+      "name": "count",
+      "type": "integer",
+      "default": 3,
+      "description": "Small count for quick testing",
+      "required": false,
+      "validation": {
+        "min_value": 1,
+        "max_value": 10
+      },
+      "examples": []
+    }
+  ],
+  "parent_template": null,
+  "variables": {
+    "STATE": "CA"
+  },
+  "metadata": {
+    "created_at": "2025-11-20T08:00:00Z",
+    "updated_at": "2025-11-20T08:00:00Z"
+  },
+  "documentation": "# Quick Test Template\n\nMinimal template for rapid testing during development.\n\nGenerates just 3 licenses with standard settings for quick iteration.\n"
+}

@@ -1,0 +1,72 @@
+{
+  "name": "age_verification",
+  "version": "1.0.0",
+  "description": "Generate licenses for age verification testing (under 21, exactly 21, over 21)",
+  "author": "AAMVA Team",
+  "tags": [
+    "testing",
+    "age_verification",
+    "compliance"
+  ],
+  "parameters": {
+    "state": "CA",
+    "count": 6,
+    "age_ranges": [
+      {
+        "min": 18,
+        "max": 20.99,
+        "count": 2
+      },
+      {
+        "min": 21,
+        "max": 21,
+        "count": 2
+      },
+      {
+        "min": 21.01,
+        "max": 30,
+        "count": 2
+      }
+    ],
+    "output_dir": "output/age_verification"
+  },
+  "parameter_definitions": [
+    {
+      "name": "state",
+      "type": "string",
+      "default": "CA",
+      "description": "State code for licenses",
+      "required": true,
+      "validation": {
+        "pattern": "^[A-Z]{2}$"
+      },
+      "examples": [
+        "CA",
+        "NY",
+        "TX"
+      ]
+    },
+    {
+      "name": "count",
+      "type": "integer",
+      "default": 6,
+      "description": "Total number of licenses (2 per age group)",
+      "required": true,
+      "validation": {
+        "min_value": 3,
+        "max_value": 100
+      },
+      "examples": []
+    }
+  ],
+  "parent_template": null,
+  "variables": {
+    "STATE": "CA",
+    "SCENARIO": "Age Verification"
+  },
+  "metadata": {
+    "created_at": "2025-11-20T08:00:00Z",
+    "updated_at": "2025-11-20T08:00:00Z"
+  },
+  "documentation": "# Age Verification Template\n\nThis template generates three groups of licenses for comprehensive age verification testing:\n\n1. **Under 21**: People aged 18-20.99 years (should fail 21+ checks)\n2. **Exactly 21**: People exactly 21 years old (edge case)\n3. **Over 21**: People aged 21-30 years (should pass 21+ checks)\n\n## Use Cases\n- Testing bar/nightclub age verification systems\n- Online gambling age gates\n- Alcohol purchase validation\n- Age-restricted content access\n\n## Expected Results\n- Group 1 (Under 21): Should be rejected for 21+ activities\n- Group 2 (Exactly 21): Edge case - should be accepted\n- Group 3 (Over 21): Should be accepted for all age restrictions\n"
+}

@@ -1,0 +1,56 @@
+{
+  "name": "real_id_mix",
+  "version": "1.0.0",
+  "description": "Generate mix of REAL ID compliant and non-compliant licenses",
+  "author": "AAMVA Team",
+  "tags": [
+    "testing",
+    "real_id",
+    "compliance"
+  ],
+  "parameters": {
+    "state": "CA",
+    "count": 10,
+    "real_id_count": 5,
+    "non_real_id_count": 5,
+    "output_dir": "output/real_id_testing"
+  },
+  "parameter_definitions": [
+    {
+      "name": "state",
+      "type": "string",
+      "default": "CA",
+      "description": "State code",
+      "required": true,
+      "validation": {},
+      "examples": []
+    },
+    {
+      "name": "real_id_count",
+      "type": "integer",
+      "default": 5,
+      "description": "Number of REAL ID compliant licenses",
+      "required": false,
+      "validation": {},
+      "examples": []
+    },
+    {
+      "name": "non_real_id_count",
+      "type": "integer",
+      "default": 5,
+      "description": "Number of non-REAL ID licenses",
+      "required": false,
+      "validation": {},
+      "examples": []
+    }
+  ],
+  "parent_template": null,
+  "variables": {
+    "STATE": "CA"
+  },
+  "metadata": {
+    "created_at": "2025-11-20T08:00:00Z",
+    "updated_at": "2025-11-20T08:00:00Z"
+  },
+  "documentation": "# REAL ID Mix Template\n\nTests REAL ID compliance with:\n- 50% REAL ID compliant licenses (star indicator)\n- 50% non-REAL ID licenses (no star)\n\nUse for testing REAL ID verification logic.\n"
+}

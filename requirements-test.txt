@@ -1,0 +1,52 @@
+# Testing Dependencies for AAMVA ID Faker
+# Install with: pip install -r requirements-test.txt
+
+# Core Testing Framework
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-xdist==3.5.0          # Parallel test execution
+pytest-timeout==2.2.0          # Prevent hanging tests
+pytest-benchmark==4.0.0        # Performance benchmarking
+pytest-mock==3.12.0            # Mocking utilities
+pytest-html==4.1.1             # HTML test reports
+pytest-sugar==0.9.7            # Better test output
+
+# Property-Based Testing (INNOVATIVE)
+hypothesis==6.92.1             # Generative testing
+hypothesis-jsonschema==0.23.1  # Schema-based generation
+
+# GUI Testing (for future GUI tests)
+# pytest-qt==4.3.1             # Qt GUI testing (uncomment when needed)
+
+# Test Data Generation
+faker==20.1.0                  # Fake data generation
+freezegun==1.4.0               # Time-travel testing
+
+# Coverage
+coverage[toml]==7.3.4          # Coverage with TOML config support
+
+# Mocking & Stubbing
+responses==0.24.1              # HTTP mocking
+
+# Code Quality (for pre-commit)
+black==23.12.0                 # Code formatting
+ruff==0.1.9                    # Fast Python linter
+mypy==1.7.1                    # Type checking
+
+# Visual Regression Testing (INNOVATIVE - install separately if needed)
+# pillow==10.1.0               # Image processing
+# opencv-python==4.8.1.78      # Computer vision
+# pixelmatch==0.3.0            # Pixel-perfect comparison
+
+# Mutation Testing (INNOVATIVE - install separately)
+# mutmut==2.4.4                # Mutation testing
+
+# Security/Fuzzing (INNOVATIVE - install separately)
+# atheris==2.3.0               # Fuzzing for security
+
+# Accessibility Testing (INNOVATIVE - install separately)
+# selenium==4.16.0             # Browser automation
+# axe-selenium-python==2.1.6   # WCAG compliance
+
+# Documentation
+pytest-clarity==1.0.1          # Better assertion messages
