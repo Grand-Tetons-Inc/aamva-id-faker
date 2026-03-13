@@ -1,0 +1,87 @@
+[
+  {
+    "DCS": "CURIE",
+    "DAC": "MARIA",
+    "DAD": "SALOMEA",
+    "DBB": "11071867",
+    "DBC": "2",
+    "DAZ": "BLK",
+    "portrait_path": "examples/physicists_images",
+    "portrait_file": "Marie_Curie_1903.jpg"
+  },
+  {
+    "DCS": "EINSTEIN",
+    "DAC": "ALBERT",
+    "DBB": "03141879",
+    "DBC": "1",
+    "DAU": "067",
+    "DAW": "175",
+    "DAZ": "GRY",
+    "DAY": "BRO",
+    "portrait_path": "examples/physicists_images",
+    "portrait_file": "Albert_Einstein_(Nobel).png"
+  },
+  {
+    "DCS": "FEYNMAN",
+    "DAC": "RICHARD",
+    "DAD": "PHILLIPS",
+    "DBB": "05111918",
+    "DBC": "1",
+    "DAZ": "BRO",
+    "portrait_path": "examples/physicists_images",
+    "portrait_file": "Richard_Feynman_Nobel.jpg"
+  },
+  {
+    "DCS": "MAYER",
+    "DAC": "MARIA",
+    "DAD": "GERTRUDE",
+    "DBB": "06281906",
+    "DBC": "2",
+    "portrait_path": "examples/physicists_images",
+    "portrait_file": "Maria_Goeppert-Mayer.jpg"
+  },
+  {
+    "DCS": "WIGNER",
+    "DAC": "EUGENE",
+    "DAD": "PAUL",
+    "DBB": "11171902",
+    "DBC": "1",
+    "portrait_path": "examples/physicists_images",
+    "portrait_file": "Wigner.jpg"
+  },
+  {
+    "DCS": "BOTHE",
+    "DAC": "WALTHER",
+    "DAD": "WILHELM",
+    "DBB": "01081891",
+    "DBC": "1",
+    "portrait_path": "examples/physicists_images",
+    "portrait_file": "120px-Bothe.jpg"
+  },
+  {
+    "DCS": "BORN",
+    "DAC": "MAX",
+    "DBB": "12111882",
+    "DBC": "1",
+    "portrait_path": "examples/physicists_images",
+    "portrait_file": "Max_Born_1954.jpg"
+  },
+  {
+    "DCS": "BOHR",
+    "DAC": "NIELS",
+    "DAD": "HENRIK",
+    "DBB": "10071885",
+    "DBC": "1",
+    "portrait_path": "examples/physicists_images",
+    "portrait_file": "Niels_Bohr.jpg"
+  },
+  {
+    "DCS": "LORENTZ",
+    "DAC": "HENDRIK",
+    "DAD": "ANTOON",
+    "DBB": "07181853",
+    "DBC": "1",
+    "portrait_path": "examples/physicists_images",
+    "portrait_file": "H_A_Lorentz_(Nobel).jpg"
+  }
+]
