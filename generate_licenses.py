@@ -30,8 +30,13 @@ exec "$(dirname "$(readlink -f "$0")")"/.venv/bin/python "$0" "$@"
 
 import os
 import argparse
+import json
 import random
+import re
 import string
+import urllib.request
+import urllib.error
+from urllib.parse import urlparse
 from faker import Faker
 from datetime import datetime, timedelta
 import pdf417
@@ -144,6 +149,233 @@ def ensure_dirs():
         raise RuntimeError(f"Fatal error: Unable to create necessary directories. {e}")
 
 def format_date(d): return d.strftime("%m%d%Y")
+
+# ---------------------------------------------------------------------------
+# Valid AAMVA 3-character field codes per DL/ID-2020 specification.
+# Used by load_user_data() to validate user-supplied override keys.
+# ---------------------------------------------------------------------------
+VALID_AAMVA_FIELDS = frozenset({
+    "DCA", "DCB", "DCD", "DBA", "DCS", "DAC", "DAD", "DBD", "DBB", "DBC",
+    "DAY", "DAU", "DAG", "DAI", "DAJ", "DAK", "DAQ", "DCF", "DCG", "DAW",
+    "DAZ", "DCL", "DDE", "DDF", "DDG", "DDA", "DDB", "DDC", "DDD", "DDK",
+    "DDL", "DAH", "DAL", "DAO", "DAP", "DAR", "DAS", "DAT",
+})
+
+# Regex for jurisdiction-specific field codes (e.g., ZAW, ZCT, ZNX)
+_Z_FIELD_PATTERN = re.compile(r"^Z[A-Z]{2}$")
+
+# ---------------------------------------------------------------------------
+# Portrait / image fields — accepted in user data but NOT encoded into the
+# AAMVA barcode.  These control portrait image placement on card output.
+#   portrait_path  — directory containing the portrait image file
+#   portrait_file  — filename of the portrait image (jpg, png, or gif)
+# ---------------------------------------------------------------------------
+PORTRAIT_FIELDS = frozenset({"portrait_path", "portrait_file", "portrait_url"})
+SUPPORTED_IMAGE_FORMATS = frozenset({".jpg", ".jpeg", ".png", ".gif"})
+
+
+def load_user_data(filepath):
+    """Load and validate user-supplied license field overrides from a JSON file.
+
+    The JSON file must contain an array of objects, where each object uses
+    AAMVA 3-character field codes as keys (e.g., DAQ, DCS, DAC) with string
+    values.  Fields not supplied in a given record will be filled by the
+    generator using faker data.
+
+    Args:
+        filepath: Path to the JSON file containing user data records.
+
+    Returns:
+        List of dicts, each containing AAMVA field code overrides.
+
+    Raises:
+        FileNotFoundError: If the specified file does not exist.
+        ValueError: If the JSON is malformed or contains invalid structure
+            or unrecognised field codes.
+    """
+    if not os.path.isfile(filepath):
+        raise FileNotFoundError(f"User data file not found: {filepath}")
+
+    with open(filepath, "r", encoding="utf-8") as fh:
+        try:
+            data = json.load(fh)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"Invalid JSON in user data file: {exc}") from exc
+
+    if not isinstance(data, list):
+        raise ValueError(
+            "User data JSON must be an array of objects, "
+            f"got {type(data).__name__}"
+        )
+
+    for idx, record in enumerate(data):
+        if not isinstance(record, dict):
+            raise ValueError(
+                f"User data record at index {idx} must be an object, "
+                f"got {type(record).__name__}"
+            )
+        for key in record:
+            if (key not in VALID_AAMVA_FIELDS
+                    and key not in PORTRAIT_FIELDS
+                    and not _Z_FIELD_PATTERN.match(key)):
+                raise ValueError(
+                    f"Unknown AAMVA field code '{key}' in user data "
+                    f"record at index {idx}"
+                )
+        # Validate portrait fields when present
+        has_path = "portrait_path" in record
+        has_file = "portrait_file" in record
+        has_url = "portrait_url" in record
+        if has_path or has_file or has_url:
+            # portrait_url can stand alone — download_portraits() resolves it
+            if not has_url:
+                if has_path and not has_file:
+                    raise ValueError(
+                        f"User data record at index {idx} has 'portrait_path' "
+                        f"but is missing 'portrait_file'"
+                    )
+                if has_file and not has_path:
+                    raise ValueError(
+                        f"User data record at index {idx} has 'portrait_file' "
+                        f"but is missing 'portrait_path'"
+                    )
+            if has_file:
+                ext = os.path.splitext(record["portrait_file"])[1].lower()
+                if ext not in SUPPORTED_IMAGE_FORMATS:
+                    raise ValueError(
+                        f"Unsupported image format '{ext}' in user data "
+                        f"record at index {idx}. "
+                        f"Supported: {', '.join(sorted(SUPPORTED_IMAGE_FORMATS))}"
+                    )
+
+    return data
+
+
+def download_portraits(user_records, download_dir=None):
+    """Download portrait images from URLs in user data records.
+
+    For each record that contains a ``portrait_url`` field, the image is
+    downloaded to a local directory.  The record is then updated with
+    ``portrait_path`` and ``portrait_file`` pointing to the downloaded file,
+    so the rest of the pipeline can treat it like a local portrait.
+
+    If the record already has ``portrait_path`` and ``portrait_file`` set,
+    those take precedence and the URL is ignored.
+
+    Args:
+        user_records: List of user data dicts (mutated in place).
+        download_dir: Directory to save downloaded images.  Defaults to
+            ``output/portraits``.
+
+    Returns:
+        The number of portraits successfully downloaded.
+    """
+    if download_dir is None:
+        download_dir = os.path.join(OUTPUT_DIR, "portraits")
+    os.makedirs(download_dir, exist_ok=True)
+
+    downloaded = 0
+    for idx, record in enumerate(user_records):
+        url = record.get("portrait_url")
+        if not url:
+            continue
+        # Skip if local path/file already provided
+        if "portrait_path" in record and "portrait_file" in record:
+            continue
+
+        # Derive a filename from the URL or record index
+        parsed = urlparse(url)
+        url_path = parsed.path.rstrip("/")
+        basename = os.path.basename(url_path) if url_path else ""
+        # If the URL doesn't end with a recognisable image extension,
+        # fall back to a generated name with .jpg
+        ext = os.path.splitext(basename)[1].lower()
+        if ext not in SUPPORTED_IMAGE_FORMATS:
+            # Build a name from the record's last name or index
+            name_part = record.get("DCS", f"portrait_{idx}").lower()
+            basename = f"{name_part}.jpg"
+
+        # Ensure unique filename
+        dest = os.path.join(download_dir, basename)
+        counter = 1
+        while os.path.exists(dest):
+            stem, extension = os.path.splitext(basename)
+            dest = os.path.join(download_dir, f"{stem}_{counter}{extension}")
+            counter += 1
+
+        try:
+            req = urllib.request.Request(url, headers={
+                "User-Agent": "Mozilla/5.0 (AAMVA-ID-Faker/1.0)"
+            })
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                content_type = resp.headers.get("Content-Type", "")
+                data = resp.read()
+
+                # Detect actual image format from content-type if needed
+                if not os.path.splitext(dest)[1]:
+                    if "png" in content_type:
+                        dest += ".png"
+                    elif "gif" in content_type:
+                        dest += ".gif"
+                    else:
+                        dest += ".jpg"
+
+                with open(dest, "wb") as f:
+                    f.write(data)
+
+            record["portrait_path"] = download_dir
+            record["portrait_file"] = os.path.basename(dest)
+            downloaded += 1
+            print(f"  📸 Downloaded portrait for record {idx}: "
+                  f"{os.path.basename(dest)}")
+
+        except (urllib.error.URLError, urllib.error.HTTPError, OSError) as exc:
+            print(f"  ⚠️  Warning: Could not download portrait for record "
+                  f"{idx} from {url}: {exc}")
+
+    return downloaded
+
+
+def apply_user_overrides(generated_data, user_records):
+    """Overlay user-supplied field values onto generated license data.
+
+    Iterates over user records and generated licenses in parallel (by index).
+    For each user record, its fields are applied to the corresponding
+    generated license's DL subfile (index 0).  Z-prefixed fields are applied
+    to the state subfile (index 1).  Fields not present in the user record
+    remain unchanged with their faker-generated values.
+
+    If there are more user records than generated licenses, the excess
+    records are ignored and a warning is printed.  If there are fewer user
+    records than licenses, the remaining licenses keep all generated data.
+
+    Args:
+        generated_data: List of license data, each being
+            ``[dlid_data, state_data]``.
+        user_records: List of override dicts from :func:`load_user_data`.
+
+    Returns:
+        The modified ``generated_data`` list (mutated in place).
+    """
+    overlap = min(len(generated_data), len(user_records))
+
+    if len(user_records) > len(generated_data):
+        print(
+            f"⚠️  Warning: {len(user_records)} user records provided but "
+            f"only {len(generated_data)} licenses generated. "
+            f"{len(user_records) - len(generated_data)} user record(s) "
+            f"will be ignored."
+        )
+
+    for i in range(overlap):
+        for key, value in user_records[i].items():
+            if key.startswith("Z"):
+                generated_data[i][1][key] = value
+            else:
+                generated_data[i][0][key] = value
+
+    return generated_data
+
 
 def generate_state_license_number(state):
     """Generate a license number conforming to the state's specific format using faker."""
@@ -380,7 +612,8 @@ def format_barcode_data(data):
     # we shove DAQ in first, because this is common in most AAMVA barcodes
     daq = dl_data["DAQ"]
     dl_subfile_type = dl_data["subfile_type"]
-    dl_fields = {k: v for k, v in dl_data.items() if k != "DAQ" and k != "subfile_type"}
+    dl_fields = {k: v for k, v in dl_data.items()
+                 if k != "DAQ" and k != "subfile_type" and k not in PORTRAIT_FIELDS}
     dl_subfile_data = dl_subfile_type + f"DAQ{daq}\n" +"".join(f"{k}{v}\n" for k, v in dl_fields.items()) + "\r"
     dl_subfile_length = len(dl_subfile_data.encode("ascii"))
     state_fields = {k: v for k, v in state_data.items() if k != "subfile_type"}
@@ -425,8 +658,8 @@ def create_avery_pdf(data_list):
     card_width = 3.5 * inch
     card_height = 2 * inch
     
-    # Margins and spacing
-    left_margin = 0.75 * inch
+    # Margins and spacing (left margin shifted 5mm / ~0.197" inward)
+    left_margin = (0.75 - 0.197) * inch
     top_margin = 0.5 * inch
     horizontal_spacing = 0.25 * inch
     vertical_spacing = 0 * inch
@@ -488,7 +721,35 @@ def create_avery_pdf(data_list):
             line_height = 0.15 * inch
             for i, line in enumerate(lines):
                 c.drawString(text_x, text_y - i * line_height, line)
-        
+
+            # Draw portrait image if provided
+            if "portrait_path" in dl_data and "portrait_file" in dl_data:
+                portrait_full = os.path.join(
+                    dl_data["portrait_path"], dl_data["portrait_file"]
+                )
+                if os.path.isfile(portrait_full):
+                    try:
+                        # Available space: right of barcode, aligned to right edge
+                        portrait_area_x = x + barcode_width + 0.2 * inch
+                        portrait_area_w = card_width - barcode_width - 0.3 * inch
+                        portrait_area_h = card_height - 0.2 * inch
+                        # Load image to get aspect ratio
+                        with PILImage.open(portrait_full) as pimg:
+                            p_w, p_h = pimg.size
+                        scale = min(portrait_area_w / p_w, portrait_area_h / p_h)
+                        draw_w = p_w * scale
+                        draw_h = p_h * scale
+                        # Right-align within card, vertically centered
+                        portrait_x = x + card_width - 0.1 * inch - draw_w
+                        portrait_y = y + (card_height - draw_h) / 2
+                        c.drawImage(
+                            portrait_full, portrait_x, portrait_y,
+                            width=draw_w, height=draw_h,
+                            preserveAspectRatio=True,
+                        )
+                    except Exception as exc:
+                        print(f"Warning: Could not add portrait to PDF: {exc}")
+
         # Start new page if there are more cards
         if page_num + 10 < len(data_list):
             c.showPage()
@@ -559,7 +820,34 @@ def generate_individual_card_image(data, img_path, width_inches=3.5, dpi=300):
             f"{state_line}"
         )
 
-    draw.text((text_x, text_y), lines, fill="black", font=small_font, spacing=10)    
+    draw.text((text_x, text_y), lines, fill="black", font=small_font, spacing=10)
+
+    # Add portrait image if provided
+    if "portrait_path" in dl_data and "portrait_file" in dl_data:
+        portrait_full = os.path.join(dl_data["portrait_path"], dl_data["portrait_file"])
+        if os.path.isfile(portrait_full):
+            try:
+                portrait = PILImage.open(portrait_full).convert("RGB")
+                # Available space: right of barcode/text, aligned to right edge
+                right_margin = int(card_width * 0.03)
+                portrait_area_x = barcode_x + barcode_width + int(card_width * 0.02)
+                portrait_area_w = card_width - portrait_area_x - right_margin
+                portrait_area_h = card_height - 2 * int(card_height * 0.05)
+                # Scale portrait to fit, preserving aspect ratio
+                p_w, p_h = portrait.size
+                scale = min(portrait_area_w / p_w, portrait_area_h / p_h)
+                new_w = int(p_w * scale)
+                new_h = int(p_h * scale)
+                portrait = portrait.resize((new_w, new_h), PILImage.Resampling.LANCZOS)
+                # Align to right edge of card, vertically centered
+                portrait_x = card_width - right_margin - new_w
+                portrait_y = int(card_height * 0.05) + (portrait_area_h - new_h) // 2
+                card.paste(portrait, (portrait_x, portrait_y))
+            except Exception as exc:
+                print(f"Warning: Could not add portrait image {portrait_full}: {exc}")
+        else:
+            print(f"Warning: Portrait file not found: {portrait_full}")
+
     # Save the card image
     card_img_path = img_path.replace('.bmp', '_card.png')
     card.save(card_img_path, dpi=(dpi, dpi))
@@ -633,7 +921,7 @@ def create_docx_card(data_list):
     section = doc.sections[-1]
     section.page_width = Inches(8.5)
     section.page_height = Inches(11)
-    section.left_margin = Inches(0.75)
+    section.left_margin = Inches(0.75 - 0.197)  # Shifted 5mm left
     section.right_margin = Inches(0.75)
     section.top_margin = Inches(0.5)
     section.bottom_margin = Inches(0.5)
@@ -732,32 +1020,52 @@ def main():
                         help='Do not generate a PDF for each card (default: False)')
     parser.add_argument('-o', '--no-odt', action='store_true',
                         help='Do not generate an ODT for each card (default: False)')
+    parser.add_argument('-u', '--user-data', type=str, default=None,
+                        help='Path to JSON file with user-supplied field overrides')
     parser.add_argument('-w', '--no-word', action='store_true',
                         help='Do not generate a DOCX for each card (default: False)')
     args = parser.parse_args()
 
     ensure_dirs()
-    records = []
-    
+
+    # ------------------------------------------------------------------
+    # Phase 1: Generate all license data dicts (no barcodes yet)
+    # ------------------------------------------------------------------
+    all_data = []
+
     if args.all_states:
-        # Generate one license for each state
-        states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL', 
-                  'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 
-                  'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 
-                  'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 
+        states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'DC', 'FL',
+                  'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME',
+                  'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH',
+                  'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI',
                   'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY']
-        for i, state in enumerate(states):
-            data = generate_license_data(state)
-            img_path, d = save_barcode_and_data(data, i)
-            records.append((img_path, d))
-            print(f"Generated license for {state}: {data[0]['DAQ']}")
+        for state in states:
+            all_data.append(generate_license_data(state))
     else:
-        # Generate specified number of licenses
-        for i in range(args.number):
-            data = generate_license_data(args.state)
-            img_path, d = save_barcode_and_data(data, i)
-            records.append((img_path, d))
-            print(f"Generated license for {data[0]['DAJ']}: {data[0]['DAQ']}")
+        for _ in range(args.number):
+            all_data.append(generate_license_data(args.state))
+
+    # ------------------------------------------------------------------
+    # Phase 2: Apply user-supplied overrides (if provided)
+    # ------------------------------------------------------------------
+    if args.user_data:
+        user_records = load_user_data(args.user_data)
+        # Download any portrait images referenced by URL
+        dl_count = download_portraits(user_records)
+        if dl_count:
+            print(f"📸 Downloaded {dl_count} portrait image(s)")
+        apply_user_overrides(all_data, user_records)
+        print(f"📋 Applied user data from {args.user_data} "
+              f"({len(user_records)} record(s))")
+
+    # ------------------------------------------------------------------
+    # Phase 3: Generate barcodes and save all artifacts
+    # ------------------------------------------------------------------
+    records = []
+    for i, data in enumerate(all_data):
+        img_path, d = save_barcode_and_data(data, i)
+        records.append((img_path, d))
+        print(f"Generated license for {data[0]['DAJ']}: {data[0]['DAQ']}")
 
     # If no PDF generation is requested, skip it
     if not args.no_pdf:
